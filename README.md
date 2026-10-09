@@ -2,8 +2,7 @@
 
 https://youtu.be/fGpYtLA6BZM
 
-El video debe presentar la configuración mediante GUI del FortiGate, la conexión desde Kali con vpnc, los accesos de los dos perfiles y RemoteApp desde Firefox. [PENDIENTE: video y URL del repositorio].
-
+El video debe presentar la configuración mediante GUI del FortiGate, la conexión desde Kali con vpnc, los accesos de los dos perfiles y RemoteApp desde Firefox. 
 # Laboratorio de acceso remoto con FortiGate VPN y RemoteApp
 
 **Autor:** Emmanuel Orlando Rodríguez Núñez  
@@ -24,7 +23,6 @@ La documentación describe la arquitectura y la configuración del laboratorio. 
 - [Consultar las capturas de configuración](images/).
 - [Consultar los diagramas](diagrams/).
 
-El informe contiene el plan de direccionamiento, la configuración Cisco, las interfaces y políticas del FortiGate, la configuración descrita de los servidores y los anexos de referencia. Conserva las figuras vigentes, identifica topología y NAT como históricos, actualiza los diagramas y retira las antiguas capturas del cliente. Añade incidentes y una tabla de 15 pruebas sin resultados inventados.
 
 ## Componentes del laboratorio
 
@@ -42,10 +40,6 @@ El informe contiene el plan de direccionamiento, la configuración Cisco, las in
 Una VM Kali se utiliza en sesiones separadas para los dos perfiles de usuario. [PENDIENTE: captura actual de la topología]. El esquema del Web Server utiliza Ubuntu, Apache, OpenSSH y xrdp.
 
 ## Topología
-
-![Topología histórica del laboratorio en GNS3](images/topologia_gns3.png)
-
-
 
 ```mermaid
 flowchart TD
@@ -75,7 +69,7 @@ Kali establece la VPN contra `20.25.98.2` mediante vpnc. El FortiGate termina el
 
 Kali obtiene la IP física en `eth0` por DHCP: **[PENDIENTE: IP DHCP de Kali]**. `tun0` recibe una dirección `/32`, por ejemplo `10.20.25.130/32` o `10.20.25.131/32`; **[PENDIENTE: IP de tun0 de la sesión documentada]**. La máscara `/25` vista en el adaptador del cliente anterior no aplica al túnel de Linux.
 
-La tabla NAT de la Figura 5 es histórica: su origen `10.20.25.10` no confirma la IP actual de Kali. **[PENDIENTE: asociación DHCP y tabla NAT actuales]**.
+La tabla NAT de la Figura 5 es histórica: su origen '10.20.25.11' 
 
 Las direcciones `20.25.x.x` representan los enlaces públicos dentro de la simulación. La dirección `8.8.8.8` está configurada como loopback de R1.
 
@@ -113,8 +107,6 @@ El grupo `grp-vpn-all` incluye ambas cuentas para la autenticación VPN. La guí
 
 `des-sha1` es la negociación reportada para esta práctica. Se informan limitaciones del vpnc 0.5.3 utilizado para SHA256 y DH14 completo; las compilaciones posteriores pueden variar. DES no es el único cifrado de vpnc y esta propuesta no demuestra incompatibilidad con AES. Se recomienda, como mejora futura, strongSwan con AES/SHA256/DH14 compatibles en ambos extremos. Esta recomendación no describe una configuración aplicada.
 
-Los datos nuevos no se atribuyen a las capturas históricas del túnel. **[PENDIENTE: captura GUI de los parámetros actuales y evidencia de asociación de grupo]**.
-
 ## Políticas del FortiGate
 
 | Política | Flujo | Servicio | Acción |
@@ -146,7 +138,7 @@ El sitio del Web Server se identifica como `https://10.7.98.10`. La guía descri
 
 Según la actualización aportada, `Get-RDServer` lista `RDS-RD-SERVER`, `RDS-CONNECTION-BROKER`, `RDS-WEB-ACCESS` y `RDS-GATEWAY`. RD Gateway está instalado y `GatewayExternalFqdn = jumblab.lab.local`. En este despliegue permite abrir la sesión del Web Client por WebSocket seguro sobre TCP 443. Cargar la lista de apps no prueba que la sesión funcione.
 
-`Get-RDWebClientPackage` informa el paquete `rd-html5`, versión `2.1.85.0`, publicado como `Production`. El certificado RDS es autofirmado y `Get-RDCertificate` informa Level **No es de confianza**. Se importó el certificado público en las autoridades de Firefox en Kali. **[PENDIENTE: confirmar importación en el servidor, asignaciones RDS y capturas de las consultas, CAP y RAP]**.
+`Get-RDWebClientPackage` informa el paquete `rd-html5`, versión `2.1.85.0`, publicado como `Production`. El certificado RDS es autofirmado y `Get-RDCertificate` informa Level **No es de confianza**. Se importó el certificado público en las autoridades de Firefox en Kali. 
 
 ```powershell
 # Consultas en el Jump Server
@@ -175,8 +167,6 @@ Xauth username usr_basico
 # [PENDIENTE: opciones reales de NAT-T, DES, DH, PFS y rutas]
 ```
 
-Las credenciales se proporcionan localmente. **[PENDIENTE: copia real saneada y captura del archivo con la PSK y la contraseña completamente ocultas]**. Confirmar `Enable Single DES` en el archivo real antes de documentarlo como opción aplicada.
-
 ```bash
 sudo vpnc --no-detach --debug 1 /etc/vpnc/fortigate-lab.conf
 ip a show eth0
@@ -190,8 +180,6 @@ firefox https://jumblab.lab.local/RDWeb/webclient
 # Al terminar la sesión
 sudo vpnc-disconnect
 ```
-
-**[PENDIENTE: nuevas capturas de eth0 y tun0, salida `got address`, SSH con timeout, hosts, autoridades de Firefox y RemoteApp por perfil]**. No incluir secretos en comandos ni capturas. `curl -kI` omite la validación TLS: no demuestra confianza del certificado ni una sesión RemoteApp.
 
 Para comprobar el bloqueo directo al Web Server con split tunnel:
 
@@ -207,99 +195,15 @@ sudo ip route del 10.7.98.10/32 dev tun0
 
 La ruta no concede acceso ni modifica los selectores IPsec. Si Fase 2 solo acepta el Jump, el tráfico al Web puede descartarse antes de la política. Para acreditar `DENY-SSH-BASICO2`, verificar llegada al firewall, perfil XAuth y política mediante Forward Traffic en GUI. El usuario del comando SSH no cambia la identidad VPN.
 
-## Problemas encontrados y solución
-
-1. **Identidad del cliente anterior:** `Deny: policy violation`, Source User vacío en Forward Traffic, aunque `diagnose vpn ike gateway list` mostraba `xauth-user` correcto. XAuth funcionaba, pero la identidad no llegaba a la política.
-2. **Asociación con vpnc:** el gateway list reporta `groups: grp_vpn_priv`. **[PENDIENTE: confirmar Source User en los logs actuales]**. Esa salida no demuestra por sí sola el campo de Forward Traffic.
-3. **Fase 2:** `NO_PROPOSAL_CHOSEN` porque FortiGate ofrecía solo `des-sha256` y vpnc proponía SHA1/MD5. Se reporta corrección al ajustar Fase 2. **[PENDIENTE: confirmar cambio exacto y propuesta final]**.
-4. **Web Client:** la lista de apps cargaba, pero la sesión caía con `connection to the remote PC was lost`. Se revisaron FQDN del gateway, certificado autofirmado y RD Gateway/CAP/RAP. **[PENDIENTE: causa final, solución y evidencia de sesión estable]**.
-5. **Sesiones VPN huérfanas:** reportadas al cerrar vpnc sin `vpnc-disconnect`. Se comunicó `diagnose vpn ike gateway clear name <NOMBRE_DEL_TUNEL>` para limpieza; se registra como antecedente, sin sustituir la demostración GUI del FortiGate. **[PENDIENTE: evidencia GUI del estado actual y desconexión limpia]**.
-6. **SSH y perfil:** bajo VPN de `usr_priv`, SSH directo al Jump cae en Implicit Deny con log Disabled. La prueba de `DENY-SSH-BASICO` exige VPN de `usr_basico`. **[PENDIENTE: captura del DENY explícito con usuario y política]**.
-
-## Pruebas de funcionamiento con cliente Kali
-
-Resultados esperados separados de resultados observados. Todas las pruebas quedan pendientes hasta recibir evidencias. Las pruebas 03 y 14 se repiten para ambos perfiles; 13 y 15 verifican los tres servicios. Desconectar antes de cambiar la cuenta XAuth. Anotar hora, IP de tun0 y perfil. Las comprobaciones locales de IP/ruta no generan un log de flujo.
-
-| Prueba y comando o acción | Resultado esperado | Política esperada | Usuario en el log | Resultado observado |
-| --- | --- | --- | --- | --- |
-| 01 Dirección física — ip a show eth0 | DHCP de VLAN 10; IP exacta pendiente | `No aplica` | No aplica | [PENDIENTE: captura y resultado] |
-| 02 Dirección VPN — ip a show tun0 | IP /32 del pool .130–.170 | `No aplica` | No aplica | [PENDIENTE: captura y resultado] |
-| 03 Conexión IPsec — sudo vpnc --no-detach --debug 1 /etc/vpnc/fortigate-lab.conf | Conexión y got address; Fase 2 pendiente | `Autenticación IKE y XAuth` | usr_basico / usr_priv; registro IKE | [PENDIENTE: captura y resultado] |
-| 04 Ruta al Jump — ip route get 10.7.98.2 | Salida por tun0 | `No aplica` | No aplica | [PENDIENTE: captura y resultado] |
-| 05 Ruta de prueba al Web — sudo ip route add 10.7.98.10/32 dev tun0; ip route get 10.7.98.10 | Ruta por tun0; selector por confirmar | `No aplica` | No aplica | [PENDIENTE: captura y resultado] |
-| 06 HTTPS básico al Jump — curl -kI --connect-timeout 5 https://jumblab.lab.local/RDWeb/; nc -zv -w 5 10.7.98.2 443 | TCP 443 permitido; respuesta HTTPS | `VPN-BASICO-A-JUMP` | XAuth usr_basico; Source User pendiente | [PENDIENTE: captura y resultado] |
-| 07 SSH básico al Jump — ssh -o ConnectTimeout=5 usr_basico@10.7.98.2 | DENY explícito; validar log, no solo timeout | `DENY-SSH-BASICO` | XAuth usr_basico; Source User pendiente | [PENDIENTE: captura y resultado] |
-| 08 SSH básico al Web — ssh -o ConnectTimeout=5 usr_basico@10.7.98.10 | DENY si llega al firewall y pasa selector | `DENY-SSH-BASICO2 si coincide` | XAuth usr_basico; Source User pendiente | [PENDIENTE: captura y resultado] |
-| 09 RDP básico al Jump — nc -zv -w 5 10.7.98.2 3389 | Bloqueado; log implícito deshabilitado | `Implicit Deny; cierre por confirmar` | XAuth usr_basico; sin log esperado | [PENDIENTE: captura y resultado] |
-| 10 HTTPS privilegiado al Jump — curl -kI --connect-timeout 5 https://jumblab.lab.local/RDWeb/ | TCP 443 permitido | `VPN-PRIV-A-JUMP` | XAuth usr_priv; Source User pendiente | [PENDIENTE: captura y resultado] |
-| 11 RDP privilegiado al Jump — xfreerdp /v:jumblab.lab.local /u:usr_priv /d:lab.local | RDP permitido; sesión tras autenticación | `VPN-PRIV-A-JUMP` | XAuth usr_priv; Source User pendiente | [PENDIENTE: captura y resultado] |
-| 12 SSH privilegiado al Jump — ssh -o ConnectTimeout=5 usr_priv@10.7.98.2 | Bloqueado; no valida DENY del básico | `Implicit Deny; cierre por confirmar` | XAuth usr_priv; sin log esperado | [PENDIENTE: captura y resultado] |
-| 13 Acceso directo privilegiado al Web — curl -kI --connect-timeout 5 https://10.7.98.10; nc -zv -w 5 10.7.98.10 3389; ssh -o ConnectTimeout=5 usr_priv@10.7.98.10 | HTTPS RDP SSH bloqueados; llegada por confirmar | `Sin ACCEPT VPN a Web; Implicit Deny si se evalúa` | XAuth usr_priv; sin log esperado | [PENDIENTE: captura y resultado] |
-| 14 RemoteApp por perfil — firefox https://jumblab.lab.local/RDWeb/webclient | Básico solo Web; privilegiado Web PuTTY RDP; sesiones funcionales | `VPN-BASICO-A-JUMP / VPN-PRIV-A-JUMP; asignación RDS` | usr_basico y usr_priv; contrastar RDS y Forward Traffic | [PENDIENTE: captura y resultado] |
-| 15 Jump hacia Web — Desde RemoteApp en Jump: navegador https://10.7.98.10; PuTTY SSH 10.7.98.10; RDP 10.7.98.10 | HTTPS SSH RDP permitidos desde 10.7.98.2; SSH y RDP con perfil privilegiado | `JUMP-A-WEB` | No inferir Source User; origen Jump y usuario en RDS | [PENDIENTE: captura y resultado] |
-
 
 Para `JUMP-A-WEB`, el origen es `10.7.98.2`; no se infiere el usuario del RemoteApp en Source User. Correlacionar la sesión RDS. Un timeout aislado o la ausencia de log no demuestran una política específica; confirmar trayecto, selector y regla.
 
 ## Organización del repositorio
 
 | Ruta | Contenido |
-| --- | --- |
+
 | `README.md` | Video, propósito, arquitectura y navegación. |
-| `docs/` | Documentación técnica en PDF y Word. |
 | `images/` | Capturas de la topología y de la configuración. |
-| `diagrams/` | Diagramas de topología lógica y flujos de acceso. |
 | `configs/` | Running-configs reales de R1 y R2 y respaldo del FortiGate. |
-| `scripts/` | Scripts efectivamente usados en servidores y pruebas desde Kali. |
-| `video/` | Material complementario o referencia al video. |
-
-## Archivos de configuración y scripts
-
-Las exportaciones reales de los routers deben incorporarse en `configs/` como `R1-running-config.txt` y `R2-running-config.txt`. El respaldo del FortiGate se obtiene desde la GUI. Los comandos de referencia incluidos en los anexos del informe no sustituyen estas exportaciones.
-
-En `scripts/` se conservan los archivos utilizados para configurar el Web Server y el Jump Server, como Netplan, el contenido Web y los scripts de Bash o PowerShell. Incluir una copia saneada de `/etc/vpnc/fortigate-lab.conf` en `configs/`, con todas las líneas de PSK y contraseñas eliminadas. Los secretos y certificados con claves privadas se excluyen de la versión pública. **[PENDIENTE: running-configs, respaldo GUI y scripts reales saneados]**.
-
-## Archivos incluidos en el paquete de entrega
-
-El paquete contiene el informe Word y su PDF regenerado, este README, once capturas conservadas y dos diagramas actualizados para Kali. Las capturas de GNS3 y NAT son históricas y se identifican así; las antiguas capturas del cliente se retiraron. Los diagramas representan el diseño, no pruebas ejecutadas.
-
-- [Diagrama lógico actualizado](diagrams/topologia_logica_kali.png).
-- [Flujos de acceso actualizados](diagrams/flujos_kali.png).
-- [Fuente Mermaid de la topología](diagrams/topologia_logica_kali.mmd).
-- [Fuente Mermaid de los flujos](diagrams/flujos_kali.mmd).
-- [Índice y alcance de las capturas](images/README.md).
-- [Configuraciones de referencia y estado de las exportaciones](configs/README.md).
-- [Scripts de referencia y comandos de prueba](scripts/README.md).
-
-Los archivos de referencia no se presentan como exportaciones reales ni como scripts cuya ejecución esté acreditada. El archivo de ejemplo de vpnc no contiene secretos y sus opciones finales requieren confirmación. Los resultados de pruebas, el video y los demás datos señalados como [PENDIENTE] conservan ese estado.
-
-## Preparación de la entrega
-
-1. Colocar este `README.md` en la raíz del repositorio y conservar las carpetas incluidas en el paquete de entrega.
-2. Completar el enlace del video actualizado al inicio del README y la URL del repositorio.
-3. Incorporar los running-configs, el respaldo del FortiGate y los scripts reales en sus carpetas.
-4. Subir el conjunto al repositorio y comprobar los enlaces desde su página principal.
-
-La documentación conserva la guía y las evidencias vigentes y registra los datos nuevos aportados sobre Kali y RDS. Los resultados, las capturas nuevas y el video siguen pendientes. No se afirma que se haya publicado o actualizado GitHub.
 
 
-## Pendientes para cerrar la documentación
-
-- Video actualizado y URL del repositorio; nueva topología GNS3 y enlace a sus figuras.
-- IP DHCP de Kali, IP de tun0 por sesión, asociación DHCP y NAT actuales.
-- Compilación completa de vpnc, archivo real saneado y opciones NAT-T/DES/DH/PFS/rutas.
-- Propuesta final y cambio exacto de Fase 2, selectores y captura GUI del túnel.
-- Source User en Forward Traffic; evidencia de la asociación de grupo y del DENY con usr_basico.
-- Importación del certificado en el servidor, asignaciones y capturas de roles, gateway, paquete, certificado, CAP y RAP.
-- Causa y solución final del Web Client; sesiones de Firefox y RemoteApp de ambos perfiles.
-- Capturas de eth0/tun0, got address, hosts, autoridades de Firefox y SSH con timeout.
-- Confirmación de DENY-ALL o fwpolicy-implicit-log, y actualización de matrices si corresponde.
-- Resultados y capturas de las 15 pruebas, evidencia local del Web Server y desconexión limpia.
-- Configuraciones y scripts reales saneados; archivos de images/ y diagrams/ incluidos y enlaces comprobados.
-
-## Referencias técnicas
-
-- [Manual de vpnc 0.5.3r550 en Debian](https://manpages.debian.org/stretch/vpnc/vpnc.8.en.html).
-- [Configuración del cliente web de Escritorio remoto en Microsoft Learn](https://learn.microsoft.com/en-us/windows-server/remote/remote-desktop-services/remote-desktop-web-client-admin).
-
-Estas referencias respaldan criterios técnicos y no sustituyen pruebas del laboratorio.
