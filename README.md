@@ -37,7 +37,6 @@ La documentación describe la arquitectura y la configuración del laboratorio. 
 | Cliente Kali Linux (vpnc) | VPN con vpnc 0.5.3, VLAN 10 por DHCP y Firefox para RD Web Client; perfiles básico y privilegiado. |
 | Cloud1 | Acceso de gestión al FortiGate mediante port1. |
 
-Una VM Kali se utiliza en sesiones separadas para los dos perfiles de usuario. [PENDIENTE: captura actual de la topología]. El esquema del Web Server utiliza Ubuntu, Apache, OpenSSH y xrdp.
 
 ## Topología
 
