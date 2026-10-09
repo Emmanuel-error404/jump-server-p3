@@ -1,0 +1,18 @@
+JUMP SERVER - CONFIGURACION DE RED DE REFERENCIA
+
+Sistema operativo: Windows Server 2022
+Funcion: Jump Server y RemoteApp
+Interfaz del FortiGate conectada al servidor: port3 (lan-jump)
+Tipo de direccionamiento: IPv4 estatico
+Direccion IPv4: 10.7.98.2
+Prefijo: /29
+Mascara de subred: 255.255.255.248
+Puerta de enlace: 10.7.98.1
+Red: 10.7.98.0/29
+Broadcast: 10.7.98.7
+
+NOMBRE DEFINIDO EN LA GUIA
+
+Nombre de acceso: jump.lab.local
+Direccion asociada: 10.7.98.2
+Dominio de laboratorio descrito: lab.local
