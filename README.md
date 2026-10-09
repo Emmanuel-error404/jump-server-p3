@@ -16,14 +16,6 @@ Implementar una red segmentada en la que los usuarios acceden por VPN a un Jump 
 
 La documentación describe la arquitectura y la configuración del laboratorio. Las capturas y los resultados nuevos quedan pendientes; no se considera demostrado el funcionamiento por la sola descripción de la configuración.
 
-## Documentación técnica
-
-- [Consultar el informe técnico en PDF](docs/Documentacion_tecnica_FortiGate.pdf).
-- [Descargar el informe técnico editable en Word](docs/Documentacion_tecnica_FortiGate.docx).
-- [Consultar las capturas de configuración](images/).
-- [Consultar los diagramas](diagrams/).
-
-
 ## Componentes del laboratorio
 
 | Componente | Función |
@@ -94,15 +86,14 @@ El grupo `grp-vpn-all` incluye ambas cuentas para la autenticación VPN. La guí
 
 | Parámetro | Valor documentado |
 | --- | --- |
-| SO y cliente | Kali Linux, vpnc 0.5.3. [PENDIENTE: salida completa de `vpnc --version`]. |
+| SO y cliente | Kali Linux, vpnc 0.5.3. 
 | Negociación | IPsec IKEv1, modo agresivo, PSK + XAuth, NAT-T. |
 | Gateway e identificador | `20.25.98.2`; IPSec ID `vpnc-lab`. |
 | Archivo | `/etc/vpnc/fortigate-lab.conf`; sin secretos en la versión pública. |
 | Túnel | `tun0`, dirección `/32` del pool `10.20.25.130–10.20.25.170`. |
 | Split tunnel | Destino autorizado `10.7.98.2/32`, `jumblab.lab.local`. |
-| Fase 1 | `des-sha1`, observada según la actualización aportada. |
-| Fase 2 | [PENDIENTE: confirmar propuesta final y cambio exacto]. `aes256-sha1` es un ejemplo, no un resultado confirmado. |
-| Selectores y PFS | [PENDIENTE: confirmar valores finales en GUI]. |
+| Fase 1 | `des-sha1`, o
+| Fase 2 | [. `es-m5` 
 
 `des-sha1` es la negociación reportada para esta práctica. Se informan limitaciones del vpnc 0.5.3 utilizado para SHA256 y DH14 completo; las compilaciones posteriores pueden variar. DES no es el único cifrado de vpnc y esta propuesta no demuestra incompatibilidad con AES. Se recomienda, como mejora futura, strongSwan con AES/SHA256/DH14 compatibles en ambos extremos. Esta recomendación no describe una configuración aplicada.
 
@@ -118,9 +109,6 @@ El grupo `grp-vpn-all` incluye ambas cuentas para la autenticación VPN. La guí
 | `test` | VPN hacia Jump. | ALL. | Deshabilitada. |
 | `Implicit Deny` | Tráfico sin coincidencia con una regla de permiso. | ALL. | DENY. |
 
-La captura documenta NAT desactivado en las reglas de aceptación y ninguna regla ACCEPT desde VPN-REMOTE hacia la LAN Web. El cierre visible es una denegación implícita. La asignación de aplicaciones dentro del Jump se controla en RemoteApp. **[PENDIENTE: confirmar si se añadió `DENY-ALL` o se habilitó `fwpolicy-implicit-log`]**. La matriz conserva el cierre observado hasta recibir evidencia GUI del cambio.
-
-![Políticas históricas del FortiGate registradas en la práctica](images/politicas_fortigate.png)
 
 ## Servicios y aplicaciones
 
@@ -154,8 +142,6 @@ La entrada de `/etc/hosts` es:
 ```text
 10.7.98.2 jumblab.lab.local
 ```
-
-Archivo usado: `/etc/vpnc/fortigate-lab.conf`. Esquema público de referencia, con líneas de secretos omitidas; no equivale a una exportación real:
 
 ```text
 IPSec gateway 20.25.98.2
