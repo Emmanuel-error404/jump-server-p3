@@ -1,0 +1,34 @@
+! R2 - Configuracion de referencia del laboratorio
+! Reconstruida a partir de la guia de la practica.
+! No es una exportacion real de show running-config.
+!
+hostname R2
+!
+interface FastEthernet0/0
+ description HACIA-R1-ISP
+ ip address 20.25.7.2 255.255.255.252
+ ip nat outside
+ no shutdown
+!
+interface GigabitEthernet1/0
+ description TRUNK-HACIA-SWITCH
+ no ip address
+ no shutdown
+!
+interface GigabitEthernet1/0.10
+ description USUARIOS-VLAN10
+ encapsulation dot1Q 10
+ ip address 10.20.25.1 255.255.255.128
+ ip nat inside
+!
+ip dhcp excluded-address 10.20.25.1 10.20.25.9
+ip dhcp pool USUARIOS_V10
+ network 10.20.25.0 255.255.255.128
+ default-router 10.20.25.1
+ dns-server 8.8.8.8
+!
+access-list 1 permit 10.20.25.0 0.0.0.127
+ip nat inside source list 1 interface FastEthernet0/0 overload
+ip route 0.0.0.0 0.0.0.0 20.25.7.1
+!
+end
