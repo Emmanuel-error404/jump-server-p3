@@ -1,0 +1,20 @@
+! R1 - Configuracion de referencia del laboratorio
+! Reconstruida a partir de la guia de la practica.
+! No es una exportacion real de show running-config.
+!
+hostname R1
+!
+interface FastEthernet0/0
+ description HACIA-R2
+ ip address 20.25.7.1 255.255.255.252
+ no shutdown
+!
+interface GigabitEthernet1/0
+ description HACIA-FORTIGATE-PORT2
+ ip address 20.25.98.1 255.255.255.252
+ no shutdown
+!
+interface Loopback0
+ ip address 8.8.8.8 255.255.255.255
+!
+end
