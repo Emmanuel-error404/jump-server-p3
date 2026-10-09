@@ -1,6 +1,6 @@
 ## Video demostrativo
 
-**[PENDIENTE: enlace del video demostrativo actualizado con Kali, vpnc y Firefox]**
+https://youtu.be/fGpYtLA6BZM
 
 El video debe presentar la configuración mediante GUI del FortiGate, la conexión desde Kali con vpnc, los accesos de los dos perfiles y RemoteApp desde Firefox. [PENDIENTE: video y URL del repositorio].
 
@@ -45,7 +45,7 @@ Una VM Kali se utiliza en sesiones separadas para los dos perfiles de usuario. [
 
 ![Topología histórica del laboratorio en GNS3](images/topologia_gns3.png)
 
-La imagen conserva la etiqueta del cliente anterior; no demuestra el uso de Kali. **[PENDIENTE: actualizar el nodo y reemplazar la captura de GNS3]**. El Mermaid siguiente ya representa el cliente final.
+
 
 ```mermaid
 flowchart TD
@@ -259,9 +259,23 @@ Las exportaciones reales de los routers deben incorporarse en `configs/` como `R
 
 En `scripts/` se conservan los archivos utilizados para configurar el Web Server y el Jump Server, como Netplan, el contenido Web y los scripts de Bash o PowerShell. Incluir una copia saneada de `/etc/vpnc/fortigate-lab.conf` en `configs/`, con todas las líneas de PSK y contraseñas eliminadas. Los secretos y certificados con claves privadas se excluyen de la versión pública. **[PENDIENTE: running-configs, respaldo GUI y scripts reales saneados]**.
 
+## Archivos incluidos en el paquete de entrega
+
+El paquete contiene el informe Word y su PDF regenerado, este README, once capturas conservadas y dos diagramas actualizados para Kali. Las capturas de GNS3 y NAT son históricas y se identifican así; las antiguas capturas del cliente se retiraron. Los diagramas representan el diseño, no pruebas ejecutadas.
+
+- [Diagrama lógico actualizado](diagrams/topologia_logica_kali.png).
+- [Flujos de acceso actualizados](diagrams/flujos_kali.png).
+- [Fuente Mermaid de la topología](diagrams/topologia_logica_kali.mmd).
+- [Fuente Mermaid de los flujos](diagrams/flujos_kali.mmd).
+- [Índice y alcance de las capturas](images/README.md).
+- [Configuraciones de referencia y estado de las exportaciones](configs/README.md).
+- [Scripts de referencia y comandos de prueba](scripts/README.md).
+
+Los archivos de referencia no se presentan como exportaciones reales ni como scripts cuya ejecución esté acreditada. El archivo de ejemplo de vpnc no contiene secretos y sus opciones finales requieren confirmación. Los resultados de pruebas, el video y los demás datos señalados como [PENDIENTE] conservan ese estado.
+
 ## Preparación de la entrega
 
-1. Colocar este `README.md` en la raíz del repositorio y conservar las carpetas del paquete adjunto.
+1. Colocar este `README.md` en la raíz del repositorio y conservar las carpetas incluidas en el paquete de entrega.
 2. Completar el enlace del video actualizado al inicio del README y la URL del repositorio.
 3. Incorporar los running-configs, el respaldo del FortiGate y los scripts reales en sus carpetas.
 4. Subir el conjunto al repositorio y comprobar los enlaces desde su página principal.
